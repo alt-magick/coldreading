@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -92,9 +93,7 @@ body {
 .file-list {
     width: 100%;
     text-align: center;
-
     height: 145px;
-
     overflow-y: auto;
 }
 
@@ -108,9 +107,7 @@ body {
 
 .file-name {
     margin: 7px 0;
-
     cursor: pointer;
-
     font-size: 17px;
 }
 
@@ -120,23 +117,17 @@ body {
 
 .file-input-area {
     width: 100%;
-
     margin-top: auto;
-
     text-align: center;
 }
 
 input,
 button {
-    font-family:
-        Georgia,
-        "Times New Roman",
-        serif;
+    font-family: Georgia, "Times New Roman", serif;
 }
 
 #filename {
     width: 75%;
-
     padding: 9px 12px;
 
     background: #000;
@@ -145,7 +136,6 @@ button {
     border: 1px solid #aaa;
 
     font-size: 16px;
-
     text-align: center;
 
     outline: none;
@@ -182,7 +172,6 @@ button:hover {
 
 .mode-option {
     margin: 12px 0;
-
     font-size: 18px;
 }
 
@@ -192,7 +181,6 @@ button:hover {
 
 #readingCard {
     height: 230px;
-
     justify-content: center;
 }
 
@@ -201,6 +189,7 @@ button:hover {
     height: 130px;
 
     display: flex;
+    flex-direction: column;
 
     align-items: center;
     justify-content: center;
@@ -208,13 +197,11 @@ button:hover {
     text-align: center;
 
     font-size: 21px;
-
     line-height: 1.45;
 
     padding: 10px;
 
     position: relative;
-
     top: -20px;
 }
 
@@ -226,7 +213,6 @@ button:hover {
     width: 100%;
 
     display: flex;
-
     justify-content: center;
 
     gap: 18px;
@@ -234,7 +220,6 @@ button:hover {
 
 #readingControls button {
     margin: 0;
-
     min-width: 90px;
 }
 
@@ -256,7 +241,6 @@ button:hover {
     position: fixed;
 
     bottom: 15px;
-
     left: 50%;
 
     transform: translateX(-50%);
@@ -268,7 +252,6 @@ button:hover {
     padding: 8px 24px;
 
     background: #000;
-
     color: #fff;
 
     border: 1px solid #aaa;
@@ -570,7 +553,6 @@ window.addEventListener(
 );
 
 resizeCanvas();
-
 animateStars();
 
 
@@ -681,11 +663,31 @@ async function startReading(timed)
         const text =
             await response.text();
 
+        /*
+         * Every physical line in the TXT file
+         * becomes exactly one reading unit.
+         *
+         * Empty lines are removed.
+         */
+
         lines =
             text
                 .replace(/\r\n/g, "\n")
                 .replace(/\r/g, "\n")
-                .split("\n");
+                .split("\n")
+                .map(function(line)
+                {
+                    return line.trim();
+                })
+                .filter(function(line)
+                {
+                    return line.length > 0;
+                });
+
+        if (lines.length === 0)
+        {
+            lines = [""];
+        }
 
         currentLine = 0;
 
@@ -699,10 +701,6 @@ async function startReading(timed)
 
         showLine();
 
-        if (timed)
-        {
-            startTimer();
-        }
     }
     catch
     {
@@ -715,7 +713,7 @@ async function startReading(timed)
 
 
 /* ==================================================
-   TEXT WRAPPING
+   WRAP ONE LINE ONLY
    ================================================== */
 
 function wrapText(
@@ -724,7 +722,9 @@ function wrapText(
 )
 {
     if (!text)
+    {
         return [""];
+    }
 
     const words =
         text.split(/\s+/);
@@ -767,7 +767,7 @@ function wrapText(
 
 
 /* ==================================================
-   SHOW CURRENT LINE
+   SHOW ONE LINE
    ================================================== */
 
 function showLine()
@@ -791,6 +791,14 @@ function showLine()
         currentLine = 0;
     }
 
+    /*
+     * Only the current original TXT line
+     * is passed to wrapText().
+     *
+     * Nothing from the next line can
+     * be added to it.
+     */
+
     const text =
         lines[currentLine];
 
@@ -799,6 +807,10 @@ function showLine()
             text,
             42
         );
+
+    /*
+     * Display no more than five visual rows.
+     */
 
     const display =
         wrapped
@@ -945,7 +957,7 @@ document.addEventListener(
                 .contains("hidden");
 
 
-        /* RIGHT ARROW */
+        /* RIGHT ARROW = NEXT */
 
         if (
             readingVisible &&
@@ -960,7 +972,7 @@ document.addEventListener(
         }
 
 
-        /* LEFT ARROW */
+        /* LEFT ARROW = PREVIOUS */
 
         if (
             readingVisible &&
@@ -975,7 +987,7 @@ document.addEventListener(
         }
 
 
-        /* ENTER IN MANUAL MODE */
+        /* ENTER = NEXT IN MANUAL MODE */
 
         if (
             readingVisible &&
