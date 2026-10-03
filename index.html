@@ -646,10 +646,8 @@ async function startReading(timed)
 
 
         /*
-         * IMPORTANT:
-         *
-         * Every physical line in the
-         * TXT file is kept separate.
+         * Every physical TXT line
+         * remains separate.
          */
 
         lines =
@@ -801,11 +799,6 @@ function showLine()
     }
 
 
-    /*
-     * Only THIS physical TXT line
-     * is wrapped.
-     */
-
     const text =
         lines[currentLine];
 
@@ -816,10 +809,6 @@ function showLine()
             42
         );
 
-
-    /*
-     * Maximum five visual rows.
-     */
 
     const display =
         wrapped
@@ -978,8 +967,6 @@ document.addEventListener(
                 .contains("hidden");
 
 
-        /* RIGHT ARROW */
-
         if (
             readingVisible &&
             event.key === "ArrowRight"
@@ -993,8 +980,6 @@ document.addEventListener(
         }
 
 
-        /* LEFT ARROW */
-
         if (
             readingVisible &&
             event.key === "ArrowLeft"
@@ -1007,8 +992,6 @@ document.addEventListener(
             return;
         }
 
-
-        /* ENTER IN MANUAL MODE */
 
         if (
             readingVisible &&
@@ -1024,8 +1007,6 @@ document.addEventListener(
         }
 
 
-        /* Q */
-
         if (
             event.key === "q" ||
             event.key === "Q"
@@ -1039,16 +1020,17 @@ document.addEventListener(
         }
 
 
-        /* MODE 1 */
-
-        if (
-            !readingVisible &&
+        const modeVisible =
             !document
                 .getElementById(
                     "modeCard"
                 )
                 .classList
-                .contains("hidden") &&
+                .contains("hidden");
+
+
+        if (
+            modeVisible &&
             event.key === "1"
         )
         {
@@ -1058,16 +1040,8 @@ document.addEventListener(
         }
 
 
-        /* MODE 2 */
-
         if (
-            !readingVisible &&
-            !document
-                .getElementById(
-                    "modeCard"
-                )
-                .classList
-                .contains("hidden") &&
+            modeVisible &&
             event.key === "2"
         )
         {
@@ -1102,7 +1076,7 @@ document
 
 
 /* ==================================================
-   STAR FIELD
+   REALISTIC STAR FIELD
    ================================================== */
 
 const canvas =
@@ -1115,6 +1089,12 @@ const ctx =
 
 let stars = [];
 
+let lastTime = 0;
+
+
+/* --------------------------------------------------
+   RESIZE
+   -------------------------------------------------- */
 
 function resizeCanvas()
 {
@@ -1128,6 +1108,10 @@ function resizeCanvas()
 }
 
 
+/* --------------------------------------------------
+   CREATE STARS
+   -------------------------------------------------- */
+
 function createStars()
 {
     stars = [];
@@ -1135,11 +1119,11 @@ function createStars()
 
     const count =
         Math.max(
-            100,
+            140,
             Math.floor(
                 canvas.width *
                 canvas.height /
-                3000
+                2500
             )
         );
 
@@ -1150,7 +1134,17 @@ function createStars()
         i++
     )
     {
+        const size =
+            Math.random() < 0.88
+                ? 1
+                : 1.5;
+
+
         stars.push({
+
+            /*
+             * Fixed starting position.
+             */
 
             x:
                 Math.random() *
@@ -1160,40 +1154,65 @@ function createStars()
                 Math.random() *
                 canvas.height,
 
-            speed:
-                0.25 +
-                Math.random() * 1.2,
 
-            symbol:
-                randomStar()
+            /*
+             * Different star sizes.
+             */
+
+            size: size,
+
+
+            /*
+             * Different brightness.
+             */
+
+            brightness:
+                0.35 +
+                Math.random() * 0.65,
+
+
+            /*
+             * Extremely subtle twinkle.
+             */
+
+            twinkleSpeed:
+                0.0004 +
+                Math.random() * 0.001,
+
+
+            twinkleOffset:
+                Math.random() *
+                Math.PI * 2,
+
+
+            /*
+             * Very slow movement.
+             */
+
+            drift:
+                0.01 +
+                Math.random() * 0.04
         });
     }
 }
 
 
-function randomStar()
+/* --------------------------------------------------
+   ANIMATE
+   -------------------------------------------------- */
+
+function animateStars(time)
 {
-    const symbols = [
-        ".",
-        ".",
-        ".",
-        ".",
-        "*",
-        "+"
-    ];
+    const delta =
+        time - lastTime;
+
+    lastTime = time;
 
 
-    return symbols[
-        Math.floor(
-            Math.random() *
-            symbols.length
-        )
-    ];
-}
+    /*
+     * Clear the previous frame.
+     */
 
-
-function animateStars()
-{
     ctx.fillStyle =
         "#000";
 
@@ -1205,27 +1224,29 @@ function animateStars()
     );
 
 
-    ctx.fillStyle =
-        "#fff";
-
-    ctx.font =
-        "14px monospace";
-
-
     for (
         const star of stars
     )
     {
-        star.y +=
-            star.speed;
+        /*
+         * Slow downward drift.
+         */
 
+        star.y +=
+            star.drift *
+            delta;
+
+
+        /*
+         * Re-enter from the top.
+         */
 
         if (
-            star.y >=
-            canvas.height
+            star.y >
+            canvas.height + 2
         )
         {
-            star.y = 0;
+            star.y = -2;
 
             star.x =
                 Math.random() *
@@ -1233,15 +1254,51 @@ function animateStars()
         }
 
 
-        star.symbol =
-            randomStar();
+        /*
+         * Gentle brightness variation.
+         *
+         * Stars never disappear.
+         */
+
+        const wave =
+            Math.sin(
+                time *
+                star.twinkleSpeed +
+                star.twinkleOffset
+            );
 
 
-        ctx.fillText(
-            star.symbol,
+        const alpha =
+            Math.max(
+                0.25,
+                Math.min(
+                    1,
+                    star.brightness +
+                    wave * 0.12
+                )
+            );
+
+
+        /*
+         * Draw star.
+         */
+
+        ctx.beginPath();
+
+        ctx.arc(
             star.x,
-            star.y
+            star.y,
+            star.size,
+            0,
+            Math.PI * 2
         );
+
+        ctx.fillStyle =
+            "rgba(255,255,255," +
+            alpha +
+            ")";
+
+        ctx.fill();
     }
 
 
@@ -1251,15 +1308,20 @@ function animateStars()
 }
 
 
+/* --------------------------------------------------
+   START STAR FIELD
+   -------------------------------------------------- */
+
 window.addEventListener(
     "resize",
     resizeCanvas
 );
 
-
 resizeCanvas();
 
-animateStars();
+requestAnimationFrame(
+    animateStars
+);
 
 
 /* ==================================================
