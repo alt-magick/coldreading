@@ -73,6 +73,8 @@ body {
     z-index: 2;
 }
 
+/* CARDS */
+
 .card {
     position: absolute;
     left: 50%;
@@ -104,6 +106,8 @@ body {
     margin-bottom: 18px;
 }
 
+/* FILE LIST */
+
 .fileList {
     width: 100%;
     max-height: 300px;
@@ -124,6 +128,8 @@ body {
 .fileItem.selected {
     background: #333;
 }
+
+/* FILE INPUT */
 
 .fileInputRow {
     display: flex;
@@ -147,6 +153,8 @@ input:focus {
     border-color: #aaa;
 }
 
+/* BUTTONS */
+
 button {
     border: 1px solid #666;
     background: #111;
@@ -161,6 +169,8 @@ button:hover {
     background: #333;
 }
 
+/* MODE */
+
 .modeLine {
     text-align: center;
     margin: 12px 0;
@@ -170,6 +180,8 @@ button:hover {
     width: 150px;
     margin: 5px;
 }
+
+/* READING */
 
 #readingText {
     width: 100%;
@@ -195,21 +207,30 @@ button:hover {
     flex: 1;
 }
 
+/* BOTTOM BACK BUTTON */
+
 #hint {
     position: fixed;
     bottom: 15px;
     left: 0;
     width: 100%;
     text-align: center;
-    font-size: 13px;
-    opacity: 0.65;
     z-index: 2;
+}
+
+#hint button {
+    min-width: 100px;
+    padding: 8px 20px;
+    border: 1px solid #666;
+    background: #111;
+    color: #fff;
+    font-family: monospace;
+    font-size: 15px;
     cursor: pointer;
 }
 
-#hint:hover {
-    opacity: 1;
-    text-decoration: underline;
+#hint button:hover {
+    background: #333;
 }
 
 #error {
@@ -230,7 +251,10 @@ button:hover {
         * &nbsp; COLD READING &nbsp; *
     </div>
 
+    <!-- FILE SELECTION -->
+
     <div id="filesCard" class="card">
+
         <div class="cardTitle">
             SCRIPTS
         </div>
@@ -240,15 +264,23 @@ button:hover {
         </div>
 
         <div class="fileInputRow">
+
             <input
                 id="fileInput"
                 type="text"
                 placeholder="File:"
                 autocomplete="off"
             >
-            <button onclick="openTypedFile()">Open</button>
+
+            <button onclick="openTypedFile()">
+                Open
+            </button>
+
         </div>
+
     </div>
+
+    <!-- MODE SELECTION -->
 
     <div id="modeCard" class="card">
 
@@ -265,22 +297,33 @@ button:hover {
         </div>
 
         <div class="modeLine">
-            <button class="modeButton" onclick="startReading('timed')">
+
+            <button
+                class="modeButton"
+                onclick="startReading('timed')"
+            >
                 Timed
             </button>
 
-            <button class="modeButton" onclick="startReading('manual')">
+            <button
+                class="modeButton"
+                onclick="startReading('manual')"
+            >
                 Manual
             </button>
+
         </div>
 
     </div>
+
+    <!-- READING -->
 
     <div id="readingCard" class="card">
 
         <div id="readingText"></div>
 
         <div class="readingButtons">
+
             <button onclick="previousLine()">
                 &larr; Back
             </button>
@@ -288,52 +331,96 @@ button:hover {
             <button onclick="nextLine()">
                 Next &rarr;
             </button>
+
         </div>
 
     </div>
 
-    <div id="hint" onclick="returnToFiles()">
-        Back
+    <!-- BOTTOM BACK BUTTON -->
+
+    <div id="hint">
+        <button onclick="returnToFiles()">
+            Back
+        </button>
     </div>
 
 </div>
 
 <script>
+
+/* =========================
+   REPOSITORY INFORMATION
+   ========================= */
+
 const siteHost = window.location.hostname;
+
 const siteParts = window.location.pathname
     .split("/")
     .filter(Boolean);
 
 let githubOwner = siteHost.split(".")[0];
+
 let githubRepo = siteParts[0] || "";
 
+
+/* =========================
+   READING VARIABLES
+   ========================= */
+
 let selectedFile = "";
+
 let lines = [];
+
 let currentLine = 0;
+
 let readingMode = "";
+
 let timer = null;
 
-/* STAR FIELD */
+
+/* =========================
+   STAR FIELD
+   ========================= */
 
 function createStars() {
-    const stars = document.getElementById("stars");
+
+    const stars =
+        document.getElementById("stars");
 
     stars.innerHTML = "";
 
-    const symbols = [".", ".", ".", ".", "*", "+"];
+    const symbols = [
+        ".",
+        ".",
+        ".",
+        ".",
+        "*",
+        "+"
+    ];
 
     const count = Math.max(
         120,
-        Math.floor(window.innerWidth * window.innerHeight / 7000)
+        Math.floor(
+            window.innerWidth *
+            window.innerHeight /
+            7000
+        )
     );
 
     for (let i = 0; i < count; i++) {
-        const star = document.createElement("div");
+
+        const star =
+            document.createElement("div");
 
         star.className = "star";
 
         star.textContent =
-            symbols[Math.floor(Math.random() * symbols.length)];
+            symbols[
+                Math.floor(
+                    Math.random() *
+                    symbols.length
+                )
+            ];
 
         star.style.left =
             Math.random() * 100 + "%";
@@ -345,13 +432,21 @@ function createStars() {
             (8 + Math.random() * 10) + "px";
 
         star.style.opacity =
-            (0.25 + Math.random() * 0.75).toFixed(2);
+            (
+                0.25 +
+                Math.random() * 0.75
+            ).toFixed(2);
 
         star.style.animationDuration =
-            (8 + Math.random() * 18) + "s";
+            (
+                8 +
+                Math.random() * 18
+            ) + "s";
 
         star.style.animationDelay =
-            (-Math.random() * 20) + "s";
+            (
+                -Math.random() * 20
+            ) + "s";
 
         stars.appendChild(star);
     }
@@ -359,16 +454,28 @@ function createStars() {
 
 createStars();
 
-window.addEventListener("resize", createStars);
+window.addEventListener(
+    "resize",
+    createStars
+);
 
-/* LOAD FILE LIST */
+
+/* =========================
+   LOAD TXT FILES
+   ========================= */
 
 async function loadFiles() {
-    const fileList = document.getElementById("fileList");
+
+    const fileList =
+        document.getElementById("fileList");
 
     if (!githubOwner || !githubRepo) {
+
         fileList.innerHTML =
-            '<div id="error">Could not determine repository.</div>';
+            '<div id="error">' +
+            'Could not determine repository.' +
+            '</div>';
+
         return;
     }
 
@@ -380,75 +487,123 @@ async function loadFiles() {
         "/contents/";
 
     try {
-        const response = await fetch(apiURL);
+
+        const response =
+            await fetch(apiURL);
 
         if (!response.ok) {
-            throw new Error("GitHub API error");
+            throw new Error(
+                "GitHub API error"
+            );
         }
 
-        const files = await response.json();
+        const files =
+            await response.json();
 
-        const txtFiles = files
-            .filter(file =>
-                file.type === "file" &&
-                file.name.toLowerCase().endsWith(".txt")
-            )
-            .sort((a, b) =>
-                a.name.localeCompare(b.name)
-            );
+        const txtFiles =
+            files
+                .filter(file =>
+                    file.type === "file" &&
+                    file.name
+                        .toLowerCase()
+                        .endsWith(".txt")
+                )
+                .sort((a, b) =>
+                    a.name.localeCompare(b.name)
+                );
 
         fileList.innerHTML = "";
 
         if (txtFiles.length === 0) {
+
             fileList.innerHTML =
-                '<div id="error">No TXT files found.</div>';
+                '<div id="error">' +
+                'No TXT files found.' +
+                '</div>';
+
             return;
         }
 
         txtFiles.forEach(file => {
-            const item = document.createElement("div");
 
-            item.className = "fileItem";
-            item.textContent = file.name;
+            const item =
+                document.createElement("div");
+
+            item.className =
+                "fileItem";
+
+            item.textContent =
+                file.name;
 
             item.onclick = function() {
-                selectFile(file.name, item);
+
+                selectFile(
+                    file.name,
+                    item
+                );
+
             };
 
             fileList.appendChild(item);
         });
 
     } catch (error) {
+
         fileList.innerHTML =
-            '<div id="error">Could not load scripts.</div>';
+            '<div id="error">' +
+            'Could not load scripts.' +
+            '</div>';
     }
 }
 
-/* SELECT FILE */
 
-function selectFile(filename, element) {
+/* =========================
+   SELECT FILE
+   ========================= */
+
+function selectFile(
+    filename,
+    element
+) {
+
     selectedFile = filename;
 
     document
         .querySelectorAll(".fileItem")
         .forEach(item => {
-            item.classList.remove("selected");
+
+            item.classList.remove(
+                "selected"
+            );
+
         });
 
     if (element) {
-        element.classList.add("selected");
+
+        element.classList.add(
+            "selected"
+        );
+
     }
 
-    document.getElementById("fileInput").value = filename;
+    document.getElementById(
+        "fileInput"
+    ).value = filename;
 
     showMode();
 }
 
-/* OPEN TYPED FILE */
+
+/* =========================
+   OPEN TYPED FILE
+   ========================= */
 
 function openTypedFile() {
+
     const input =
-        document.getElementById("fileInput");
+        document.getElementById(
+            "fileInput"
+        );
 
     const filename =
         input.value.trim();
@@ -462,71 +617,111 @@ function openTypedFile() {
     showMode();
 }
 
-/* SHOW MODE */
+
+/* =========================
+   SHOW MODE
+   ========================= */
 
 function showMode() {
-    document.getElementById("filesCard").style.display =
-        "none";
 
-    document.getElementById("modeCard").style.display =
-        "block";
+    document.getElementById(
+        "filesCard"
+    ).style.display = "none";
 
-    document.getElementById("readingCard").style.display =
-        "none";
+    document.getElementById(
+        "modeCard"
+    ).style.display = "block";
+
+    document.getElementById(
+        "readingCard"
+    ).style.display = "none";
 
     clearInterval(timer);
 }
 
-/* START READING */
+
+/* =========================
+   START READING
+   ========================= */
 
 async function startReading(mode) {
+
     readingMode = mode;
 
     try {
+
         const response =
-            await fetch(encodeURIComponent(selectedFile));
+            await fetch(
+                encodeURIComponent(
+                    selectedFile
+                )
+            );
 
         if (!response.ok) {
-            throw new Error("File not found");
+
+            throw new Error(
+                "File not found"
+            );
+
         }
 
-        const text = await response.text();
+        const text =
+            await response.text();
 
-        lines = prepareLines(text);
+        lines =
+            prepareLines(text);
 
         if (lines.length === 0) {
-            lines = ["No text found."];
+
+            lines = [
+                "No text found."
+            ];
+
         }
 
         currentLine = 0;
 
-        document.getElementById("modeCard").style.display =
-            "none";
+        document.getElementById(
+            "modeCard"
+        ).style.display = "none";
 
-        document.getElementById("readingCard").style.display =
-            "block";
+        document.getElementById(
+            "readingCard"
+        ).style.display = "block";
 
         showLine();
 
         clearInterval(timer);
 
         if (readingMode === "timed") {
+
             timer = setInterval(
                 nextLine,
                 3500
             );
+
         }
 
     } catch (error) {
-        alert("Could not open: " + selectedFile);
+
+        alert(
+            "Could not open: " +
+            selectedFile
+        );
+
     }
 }
 
-/* PREPARE TEXT */
+
+/* =========================
+   PREPARE TEXT
+   ========================= */
 
 function prepareLines(text) {
+
     const words =
-        text.replace(/\r/g, "")
+        text
+            .replace(/\r/g, "")
             .split(/\s+/)
             .filter(Boolean);
 
@@ -542,14 +737,18 @@ function prepareLines(text) {
                 : current + " " + word;
 
         if (test.length <= 42) {
+
             current = test;
+
         } else {
+
             if (current) {
                 result.push(current);
             }
 
             current = word;
         }
+
     });
 
     if (current) {
@@ -559,14 +758,22 @@ function prepareLines(text) {
     return result;
 }
 
-/* SHOW LINE */
+
+/* =========================
+   SHOW CURRENT LINE
+   ========================= */
 
 function showLine() {
+
     const readingText =
-        document.getElementById("readingText");
+        document.getElementById(
+            "readingText"
+        );
 
     if (!lines.length) {
+
         readingText.textContent = "";
+
         return;
     }
 
@@ -574,123 +781,215 @@ function showLine() {
         currentLine = 0;
     }
 
-    if (currentLine >= lines.length) {
-        currentLine = lines.length - 1;
+    if (
+        currentLine >=
+        lines.length
+    ) {
+
+        currentLine =
+            lines.length - 1;
+
     }
 
     readingText.textContent =
         lines[currentLine];
 }
 
-/* NEXT */
+
+/* =========================
+   NEXT LINE
+   ========================= */
 
 function nextLine() {
-    if (currentLine < lines.length - 1) {
+
+    if (
+        currentLine <
+        lines.length - 1
+    ) {
+
         currentLine++;
+
         showLine();
+
     }
 }
 
-/* PREVIOUS */
+
+/* =========================
+   PREVIOUS LINE
+   ========================= */
 
 function previousLine() {
+
     if (currentLine > 0) {
+
         currentLine--;
+
         showLine();
+
     }
 }
 
-/* RETURN TO FILES */
+
+/* =========================
+   RETURN TO FILES
+   ========================= */
 
 function returnToFiles() {
+
     clearInterval(timer);
 
-    document.getElementById("readingCard").style.display =
-        "none";
+    document.getElementById(
+        "readingCard"
+    ).style.display = "none";
 
-    document.getElementById("modeCard").style.display =
-        "none";
+    document.getElementById(
+        "modeCard"
+    ).style.display = "none";
 
-    document.getElementById("filesCard").style.display =
-        "block";
+    document.getElementById(
+        "filesCard"
+    ).style.display = "block";
 
     currentLine = 0;
+
     lines = [];
+
     readingMode = "";
 }
 
-/* KEYBOARD CONTROLS */
 
-document.addEventListener("keydown", function(event) {
+/* =========================
+   KEYBOARD CONTROLS
+   ========================= */
 
-    const key = event.key.toLowerCase();
+document.addEventListener(
+    "keydown",
+    function(event) {
 
-    if (key === "q") {
-        event.preventDefault();
-        returnToFiles();
-        return;
-    }
+        const key =
+            event.key.toLowerCase();
 
-    if (
-        document.getElementById("readingCard").style.display ===
-        "block"
-    ) {
 
-        if (event.key === "ArrowLeft") {
+        /* Q = BACK */
+
+        if (key === "q") {
+
             event.preventDefault();
-            previousLine();
+
+            returnToFiles();
+
             return;
         }
 
-        if (event.key === "ArrowRight") {
-            event.preventDefault();
-            nextLine();
-            return;
-        }
+
+        /* READING CONTROLS */
 
         if (
-            event.key === "Enter" &&
-            readingMode === "manual"
+            document.getElementById(
+                "readingCard"
+            ).style.display === "block"
         ) {
-            event.preventDefault();
-            nextLine();
-            return;
+
+            if (
+                event.key ===
+                "ArrowLeft"
+            ) {
+
+                event.preventDefault();
+
+                previousLine();
+
+                return;
+            }
+
+            if (
+                event.key ===
+                "ArrowRight"
+            ) {
+
+                event.preventDefault();
+
+                nextLine();
+
+                return;
+            }
+
+            if (
+                event.key === "Enter" &&
+                readingMode === "manual"
+            ) {
+
+                event.preventDefault();
+
+                nextLine();
+
+                return;
+            }
         }
+
+
+        /* MODE CONTROLS */
+
+        if (
+            document.getElementById(
+                "modeCard"
+            ).style.display === "block"
+        ) {
+
+            if (event.key === "1") {
+
+                event.preventDefault();
+
+                startReading("timed");
+
+                return;
+            }
+
+            if (event.key === "2") {
+
+                event.preventDefault();
+
+                startReading("manual");
+
+                return;
+            }
+        }
+
     }
+);
 
-    if (
-        document.getElementById("modeCard").style.display ===
-        "block"
-    ) {
 
-        if (event.key === "1") {
-            event.preventDefault();
-            startReading("timed");
-            return;
+/* =========================
+   FILE INPUT ENTER
+   ========================= */
+
+document
+    .getElementById("fileInput")
+    .addEventListener(
+        "keydown",
+        function(event) {
+
+            if (
+                event.key === "Enter"
+            ) {
+
+                event.preventDefault();
+
+                openTypedFile();
+
+            }
+
         }
+    );
 
-        if (event.key === "2") {
-            event.preventDefault();
-            startReading("manual");
-            return;
-        }
-    }
-});
 
-/* FILE INPUT ENTER */
-
-document.getElementById("fileInput")
-    .addEventListener("keydown", function(event) {
-
-        if (event.key === "Enter") {
-            event.preventDefault();
-            openTypedFile();
-        }
-    });
-
-/* LOAD */
+/* =========================
+   LOAD PAGE
+   ========================= */
 
 loadFiles();
+
 </script>
 
 </body>
