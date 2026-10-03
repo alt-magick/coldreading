@@ -1,0 +1,910 @@
+<?php
+
+$txtFiles = [];
+
+foreach (glob(__DIR__ . '/*.txt') as $file) {
+    $txtFiles[] = basename($file);
+}
+
+sort($txtFiles);
+
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Cold Reading</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #000;
+    color: #fff;
+    font-family: Georgia, "Times New Roman", serif;
+}
+
+#stars {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    background: #000;
+}
+
+#app {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#title {
+    margin-top: 25px;
+    font-size: 25px;
+    letter-spacing: 2px;
+    text-align: center;
+    text-shadow:
+        0 0 8px rgba(255,255,255,.8),
+        0 0 18px rgba(255,255,255,.35);
+}
+
+.card {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    width: min(60vw, 600px);
+    min-width: 340px;
+
+    height: 330px;
+
+    border: 2px solid #fff;
+
+    background: rgba(0,0,0,.88);
+
+    box-shadow:
+        0 0 15px rgba(255,255,255,.25),
+        0 0 35px rgba(255,255,255,.08);
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    padding: 22px;
+}
+
+.card-title {
+    font-size: 18px;
+    letter-spacing: 1px;
+    text-align: center;
+    margin-bottom: 22px;
+}
+
+.file-list {
+    width: 100%;
+    text-align: center;
+    height: 145px;
+    overflow-y: auto;
+}
+
+.file-list::-webkit-scrollbar {
+    width: 5px;
+}
+
+.file-list::-webkit-scrollbar-thumb {
+    background: #777;
+}
+
+.file-name {
+    margin: 7px 0;
+    cursor: pointer;
+    font-size: 17px;
+}
+
+.file-name:hover {
+    text-decoration: underline;
+}
+
+.file-input-area {
+    width: 100%;
+    margin-top: auto;
+    text-align: center;
+}
+
+input,
+button {
+    font-family: Georgia, "Times New Roman", serif;
+}
+
+#filename {
+    width: 75%;
+    padding: 9px 12px;
+
+    background: #000;
+    color: #fff;
+
+    border: 1px solid #aaa;
+
+    font-size: 16px;
+    text-align: center;
+
+    outline: none;
+}
+
+#filename:focus {
+    border-color: #fff;
+    box-shadow: 0 0 8px rgba(255,255,255,.4);
+}
+
+button {
+    margin-top: 12px;
+
+    padding: 8px 20px;
+
+    background: #000;
+    color: #fff;
+
+    border: 1px solid #aaa;
+
+    cursor: pointer;
+
+    font-size: 15px;
+}
+
+button:hover {
+    border-color: #fff;
+    box-shadow: 0 0 8px rgba(255,255,255,.35);
+}
+
+.mode-option {
+    margin: 12px 0;
+    font-size: 18px;
+}
+
+.mode-option span {
+    cursor: pointer;
+}
+
+#readingCard {
+    height: 230px;
+    justify-content: center;
+}
+
+#readingText {
+    width: 100%;
+    height: 130px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+
+    font-size: 21px;
+    line-height: 1.45;
+
+    padding: 10px;
+
+    position: relative;
+    top: -20px;
+}
+
+#readingControls {
+    position: absolute;
+    bottom: 18px;
+
+    width: 100%;
+
+    display: flex;
+    justify-content: center;
+    gap: 18px;
+}
+
+#readingControls button {
+    margin: 0;
+    min-width: 90px;
+}
+
+#modeCard {
+    height: 300px;
+}
+
+#modeButtons {
+    margin-top: 15px;
+}
+
+.hidden {
+    display: none !important;
+}
+
+#hint {
+    position: fixed;
+    bottom: 15px;
+    left: 0;
+    width: 100%;
+
+    text-align: center;
+
+    font-size: 13px;
+    opacity: .65;
+
+    z-index: 2;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<canvas id="stars"></canvas>
+
+<div id="app">
+
+    <div id="title">
+        * &nbsp; COLD READING &nbsp; *
+    </div>
+
+
+    <!-- FILE SELECTION -->
+
+    <div id="fileCard" class="card">
+
+        <div class="card-title">
+            SCRIPTS
+        </div>
+
+        <div class="file-list">
+
+            <div style="height:18px;"></div>
+
+            <?php if (empty($txtFiles)): ?>
+
+                <div class="file-name">
+                    No TXT files found
+                </div>
+
+            <?php else: ?>
+
+                <?php foreach ($txtFiles as $file): ?>
+
+                    <div
+                        class="file-name"
+                        onclick="selectFile(<?= htmlspecialchars(json_encode($file), ENT_QUOTES, 'UTF-8') ?>)"
+                    >
+                        <?= htmlspecialchars($file) ?>
+                    </div>
+
+                <?php endforeach; ?>
+
+            <?php endif; ?>
+
+        </div>
+
+        <div class="file-input-area">
+
+            <input
+                type="text"
+                id="filename"
+                placeholder="File:"
+                autocomplete="off"
+            >
+
+            <br>
+
+            <button onclick="openTypedFile()">
+                Open
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- MODE SELECTION -->
+
+    <div id="modeCard" class="card hidden">
+
+        <div class="card-title">
+            READING MODE
+        </div>
+
+        <div class="mode-option">
+            <span onclick="startReading(true)">
+                1 = Timed reading
+            </span>
+        </div>
+
+        <div class="mode-option">
+            <span onclick="startReading(false)">
+                2 = Manual reading
+            </span>
+        </div>
+
+        <div id="modeButtons">
+
+            <button onclick="startReading(true)">
+                Timed
+            </button>
+
+            <button onclick="startReading(false)">
+                Manual
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- READING -->
+
+    <div id="readingCard" class="card hidden">
+
+        <div id="readingText"></div>
+
+        <div id="readingControls">
+
+            <button onclick="previousLine()">
+                â† Back
+            </button>
+
+            <button onclick="nextLine()">
+                Next â†’
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<div id="hint">
+    Left / Right Arrow Keys &nbsp; â€¢ &nbsp; Q = File Selection
+</div>
+
+
+<script>
+
+/* ==================================================
+   STAR FIELD
+   ================================================== */
+
+const canvas = document.getElementById("stars");
+const ctx = canvas.getContext("2d");
+
+let stars = [];
+
+function resizeCanvas()
+{
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    createStars();
+}
+
+function createStars()
+{
+    stars = [];
+
+    const count =
+        Math.max(
+            100,
+            Math.floor(
+                canvas.width *
+                canvas.height /
+                3000
+            )
+        );
+
+    for (let i = 0; i < count; i++)
+    {
+        stars.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+
+            speed:
+                0.25 +
+                Math.random() * 1.2,
+
+            symbol:
+                randomStar()
+        });
+    }
+}
+
+function randomStar()
+{
+    const symbols = [
+        ".",
+        ".",
+        ".",
+        ".",
+        "*",
+        "+"
+    ];
+
+    return symbols[
+        Math.floor(
+            Math.random() * symbols.length
+        )
+    ];
+}
+
+function animateStars()
+{
+    ctx.fillStyle = "#000";
+    ctx.fillRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+    ctx.fillStyle = "#fff";
+
+    ctx.font = "14px monospace";
+
+    for (const star of stars)
+    {
+        star.y += star.speed;
+
+        if (star.y >= canvas.height)
+        {
+            star.y = 0;
+            star.x =
+                Math.random() *
+                canvas.width;
+        }
+
+        star.symbol = randomStar();
+
+        ctx.fillText(
+            star.symbol,
+            star.x,
+            star.y
+        );
+    }
+
+    requestAnimationFrame(
+        animateStars
+    );
+}
+
+window.addEventListener(
+    "resize",
+    resizeCanvas
+);
+
+resizeCanvas();
+animateStars();
+
+
+/* ==================================================
+   FILE DATA
+   ================================================== */
+
+const availableFiles =
+    <?= json_encode($txtFiles) ?>;
+
+let selectedFile = "";
+let lines = [];
+let currentLine = 0;
+let timedMode = true;
+let timer = null;
+
+
+/* ==================================================
+   FILE SELECTION
+   ================================================== */
+
+function selectFile(file)
+{
+    selectedFile = file;
+
+    document.getElementById(
+        "filename"
+    ).value = file;
+
+    showModeCard();
+}
+
+function openTypedFile()
+{
+    const input =
+        document.getElementById(
+            "filename"
+        );
+
+    const filename =
+        input.value.trim();
+
+    if (!filename)
+        return;
+
+    if (!availableFiles.includes(filename))
+    {
+        alert(
+            "That TXT file was not found."
+        );
+
+        return;
+    }
+
+    selectedFile = filename;
+
+    showModeCard();
+}
+
+
+/* ==================================================
+   MODE CARD
+   ================================================== */
+
+function showModeCard()
+{
+    document.getElementById(
+        "fileCard"
+    ).classList.add("hidden");
+
+    document.getElementById(
+        "modeCard"
+    ).classList.remove("hidden");
+}
+
+
+/* ==================================================
+   START READING
+   ================================================== */
+
+async function startReading(timed)
+{
+    timedMode = timed;
+
+    try
+    {
+        const response =
+            await fetch(
+                encodeURIComponent(
+                    selectedFile
+                )
+            );
+
+        if (!response.ok)
+        {
+            throw new Error();
+        }
+
+        const text =
+            await response.text();
+
+        lines =
+            text
+            .replace(/\r\n/g, "\n")
+            .replace(/\r/g, "\n")
+            .split("\n");
+
+        currentLine = 0;
+
+        document.getElementById(
+            "modeCard"
+        ).classList.add("hidden");
+
+        document.getElementById(
+            "readingCard"
+        ).classList.remove("hidden");
+
+        showLine();
+
+        if (timedMode)
+        {
+            startTimer();
+        }
+    }
+    catch
+    {
+        alert(
+            "Could not open " +
+            selectedFile
+        );
+    }
+}
+
+
+/* ==================================================
+   TEXT WRAPPING
+   ================================================== */
+
+function wrapText(text, maxCharacters)
+{
+    if (!text)
+        return [""];
+
+    const words =
+        text.split(/\s+/);
+
+    const result = [];
+
+    let current = "";
+
+    for (const word of words)
+    {
+        if (!current)
+        {
+            current = word;
+        }
+        else if (
+            current.length +
+            1 +
+            word.length <=
+            maxCharacters
+        )
+        {
+            current += " " + word;
+        }
+        else
+        {
+            result.push(current);
+            current = word;
+        }
+    }
+
+    if (current)
+        result.push(current);
+
+    return result;
+}
+
+
+/* ==================================================
+   SHOW CURRENT LINE
+   ================================================== */
+
+function showLine()
+{
+    if (lines.length === 0)
+    {
+        lines = [""];
+    }
+
+    if (currentLine < 0)
+    {
+        currentLine =
+            lines.length - 1;
+    }
+
+    if (currentLine >= lines.length)
+    {
+        currentLine = 0;
+    }
+
+    const text =
+        lines[currentLine];
+
+    const wrapped =
+        wrapText(
+            text,
+            42
+        );
+
+    const display =
+        wrapped
+        .slice(0, 5)
+        .join("<br>");
+
+    document.getElementById(
+        "readingText"
+    ).innerHTML = display;
+
+    if (timedMode)
+    {
+        startTimer();
+    }
+}
+
+
+/* ==================================================
+   NEXT LINE
+   ================================================== */
+
+function nextLine()
+{
+    stopTimer();
+
+    currentLine++;
+
+    if (currentLine >= lines.length)
+    {
+        currentLine = 0;
+    }
+
+    showLine();
+}
+
+
+/* ==================================================
+   PREVIOUS LINE
+   ================================================== */
+
+function previousLine()
+{
+    stopTimer();
+
+    currentLine--;
+
+    if (currentLine < 0)
+    {
+        currentLine =
+            lines.length - 1;
+    }
+
+    showLine();
+}
+
+
+/* ==================================================
+   TIMER
+   ================================================== */
+
+function startTimer()
+{
+    stopTimer();
+
+    if (!timedMode)
+        return;
+
+    timer =
+        setTimeout(
+            function()
+            {
+                currentLine++;
+
+                if (
+                    currentLine >=
+                    lines.length
+                )
+                {
+                    currentLine = 0;
+                }
+
+                showLine();
+            },
+            3500
+        );
+}
+
+function stopTimer()
+{
+    if (timer !== null)
+    {
+        clearTimeout(timer);
+        timer = null;
+    }
+}
+
+
+/* ==================================================
+   RETURN TO FILE SELECTION
+   ================================================== */
+
+function returnToFiles()
+{
+    stopTimer();
+
+    document.getElementById(
+        "readingCard"
+    ).classList.add("hidden");
+
+    document.getElementById(
+        "modeCard"
+    ).classList.add("hidden");
+
+    document.getElementById(
+        "fileCard"
+    ).classList.remove("hidden");
+
+    document.getElementById(
+        "filename"
+    ).focus();
+}
+
+
+/* ==================================================
+   KEYBOARD CONTROLS
+   ================================================== */
+
+document.addEventListener(
+    "keydown",
+    function(event)
+    {
+        const readingVisible =
+            !document
+                .getElementById("readingCard")
+                .classList
+                .contains("hidden");
+
+        if (readingVisible)
+        {
+            // Right arrow = next line.
+            if (event.key === "ArrowRight")
+            {
+                event.preventDefault();
+                nextLine();
+                return;
+            }
+
+            // Left arrow = previous line.
+            if (event.key === "ArrowLeft")
+            {
+                event.preventDefault();
+                previousLine();
+                return;
+            }
+
+            // Enter = next line in manual mode.
+            if (
+                event.key === "Enter" &&
+                !timedMode
+            )
+            {
+                event.preventDefault();
+                nextLine();
+                return;
+            }
+
+            // Q = return to file selection.
+            if (
+                event.key === "q" ||
+                event.key === "Q"
+            )
+            {
+                event.preventDefault();
+                returnToFiles();
+                return;
+            }
+        }
+    }
+);
+
+
+/* ==================================================
+   FILE INPUT ENTER
+   ================================================== */
+
+document.getElementById(
+    "filename"
+).addEventListener(
+    "keydown",
+    function(event)
+    {
+        if (event.key === "Enter")
+        {
+            event.preventDefault();
+            openTypedFile();
+        }
+    }
+);
+
+</script>
+
+</body>
+</html>
+
