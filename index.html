@@ -3,9 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Cold Reading</title>
 
 <style>
+
 * {
     box-sizing: border-box;
 }
@@ -19,231 +21,282 @@ body {
     overflow: hidden;
     background: #000;
     color: #fff;
-    font-family: monospace;
+    font-family: Georgia, "Times New Roman", serif;
 }
-
-body {
-    position: relative;
-}
-
-/* STAR FIELD */
 
 #stars {
     position: fixed;
     inset: 0;
-    overflow: hidden;
+    width: 100%;
+    height: 100%;
     z-index: 0;
-    pointer-events: none;
+    background: #000;
 }
-
-.star {
-    position: absolute;
-    font-size: 12px;
-    opacity: 0.7;
-    animation: starMove linear infinite;
-}
-
-@keyframes starMove {
-    from {
-        transform: translateY(0);
-    }
-
-    to {
-        transform: translateY(100vh);
-    }
-}
-
-/* MAIN */
 
 #app {
     position: relative;
     z-index: 1;
     width: 100%;
     height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 #title {
-    position: fixed;
-    top: 18px;
-    left: 0;
-    width: 100%;
-    text-align: center;
-    font-size: 22px;
+    margin-top: 25px;
+    font-size: 25px;
     letter-spacing: 2px;
-    z-index: 2;
-}
+    text-align: center;
 
-/* CARDS */
+    text-shadow:
+        0 0 8px rgba(255,255,255,.8),
+        0 0 18px rgba(255,255,255,.35);
+}
 
 .card {
     position: absolute;
+
+    top: 50%;
     left: 50%;
-    transform: translateX(-50%);
-    width: min(90vw, 520px);
-    border: 1px solid #555;
-    background: rgba(0, 0, 0, 0.88);
-    box-shadow: 0 0 18px rgba(255, 255, 255, 0.08);
-    padding: 18px;
-}
 
-#filesCard {
-    top: 90px;
-}
+    transform: translate(-50%, -50%);
 
-#modeCard {
-    top: 90px;
-    display: none;
-}
+    width: min(60vw, 600px);
+    min-width: 340px;
 
-#readingCard {
-    top: 90px;
-    display: none;
-}
+    height: 330px;
 
-.cardTitle {
-    text-align: center;
-    font-size: 18px;
-    margin-bottom: 18px;
-}
+    border: 2px solid #fff;
 
-/* FILE LIST */
+    background: rgba(0,0,0,.88);
 
-.fileList {
-    width: 100%;
-    max-height: 300px;
-    overflow-y: auto;
-    text-align: center;
-}
+    box-shadow:
+        0 0 15px rgba(255,255,255,.25),
+        0 0 35px rgba(255,255,255,.08);
 
-.fileItem {
-    padding: 8px;
-    cursor: pointer;
-    font-size: 16px;
-}
-
-.fileItem:hover {
-    background: #222;
-}
-
-.fileItem.selected {
-    background: #333;
-}
-
-/* FILE INPUT */
-
-.fileInputRow {
     display: flex;
-    gap: 8px;
-    margin-top: 15px;
+    flex-direction: column;
+    align-items: center;
+
+    padding: 22px;
 }
 
-input {
-    flex: 1;
-    min-width: 0;
-    padding: 9px;
-    border: 1px solid #555;
+.card-title {
+    font-size: 18px;
+    letter-spacing: 1px;
+    text-align: center;
+    margin-bottom: 22px;
+}
+
+.file-list {
+    width: 100%;
+    text-align: center;
+
+    height: 145px;
+
+    overflow-y: auto;
+}
+
+.file-list::-webkit-scrollbar {
+    width: 5px;
+}
+
+.file-list::-webkit-scrollbar-thumb {
+    background: #777;
+}
+
+.file-name {
+    margin: 7px 0;
+
+    cursor: pointer;
+
+    font-size: 17px;
+}
+
+.file-name:hover {
+    text-decoration: underline;
+}
+
+.file-input-area {
+    width: 100%;
+
+    margin-top: auto;
+
+    text-align: center;
+}
+
+input,
+button {
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+}
+
+#filename {
+    width: 75%;
+
+    padding: 9px 12px;
+
     background: #000;
     color: #fff;
-    font-family: monospace;
-    font-size: 15px;
+
+    border: 1px solid #aaa;
+
+    font-size: 16px;
+
+    text-align: center;
+
     outline: none;
 }
 
-input:focus {
-    border-color: #aaa;
+#filename:focus {
+    border-color: #fff;
+
+    box-shadow:
+        0 0 8px rgba(255,255,255,.4);
 }
 
-/* BUTTONS */
-
 button {
-    border: 1px solid #666;
-    background: #111;
+    margin-top: 12px;
+
+    padding: 8px 20px;
+
+    background: #000;
     color: #fff;
-    padding: 9px 15px;
-    font-family: monospace;
-    font-size: 15px;
+
+    border: 1px solid #aaa;
+
     cursor: pointer;
+
+    font-size: 15px;
 }
 
 button:hover {
-    background: #333;
+    border-color: #fff;
+
+    box-shadow:
+        0 0 8px rgba(255,255,255,.35);
 }
 
-/* MODE */
-
-.modeLine {
-    text-align: center;
+.mode-option {
     margin: 12px 0;
+
+    font-size: 18px;
 }
 
-.modeButton {
-    width: 150px;
-    margin: 5px;
+.mode-option span {
+    cursor: pointer;
 }
 
-/* READING */
+#readingCard {
+    height: 230px;
+
+    justify-content: center;
+}
 
 #readingText {
     width: 100%;
     height: 130px;
+
     display: flex;
+
     align-items: center;
     justify-content: center;
+
     text-align: center;
+
     font-size: 21px;
+
     line-height: 1.45;
+
     padding: 10px;
+
     position: relative;
+
     top: -20px;
 }
 
-.readingButtons {
-    display: flex;
-    justify-content: space-between;
-    gap: 10px;
-}
+#readingControls {
+    position: absolute;
 
-.readingButtons button {
-    flex: 1;
-}
+    bottom: 18px;
 
-/* BOTTOM BACK BUTTON */
-
-#hint {
-    position: fixed;
-    bottom: 15px;
-    left: 0;
     width: 100%;
-    text-align: center;
-    z-index: 2;
+
+    display: flex;
+
+    justify-content: center;
+
+    gap: 18px;
 }
 
-#hint button {
-    min-width: 100px;
-    padding: 8px 20px;
-    border: 1px solid #666;
-    background: #111;
+#readingControls button {
+    margin: 0;
+
+    min-width: 90px;
+}
+
+#modeCard {
+    height: 300px;
+}
+
+#modeButtons {
+    margin-top: 15px;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* BACK BUTTON */
+
+#backButton {
+    position: fixed;
+
+    bottom: 15px;
+
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    z-index: 10;
+
+    margin: 0;
+
+    padding: 8px 24px;
+
+    background: #000;
+
     color: #fff;
-    font-family: monospace;
+
+    border: 1px solid #aaa;
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
     font-size: 15px;
+
     cursor: pointer;
 }
 
-#hint button:hover {
-    background: #333;
+#backButton:hover {
+    border-color: #fff;
+
+    box-shadow:
+        0 0 8px rgba(255,255,255,.35);
 }
 
-#error {
-    text-align: center;
-    color: #aaa;
-    padding: 10px;
-}
 </style>
+
 </head>
 
 <body>
 
-<div id="stars"></div>
+<canvas id="stars"></canvas>
 
 <div id="app">
 
@@ -251,26 +304,52 @@ button:hover {
         * &nbsp; COLD READING &nbsp; *
     </div>
 
+
     <!-- FILE SELECTION -->
 
-    <div id="filesCard" class="card">
+    <div id="fileCard" class="card">
 
-        <div class="cardTitle">
+        <div class="card-title">
             SCRIPTS
         </div>
 
-        <div id="fileList" class="fileList">
-            Loading...
+        <div class="file-list">
+
+            <div style="height:18px;"></div>
+
+            <?php if (empty($txtFiles)): ?>
+
+                <div class="file-name">
+                    No TXT files found
+                </div>
+
+            <?php else: ?>
+
+                <?php foreach ($txtFiles as $file): ?>
+
+                    <div
+                        class="file-name"
+                        onclick="selectFile(<?= htmlspecialchars(json_encode($file), ENT_QUOTES, 'UTF-8') ?>)"
+                    >
+                        <?= htmlspecialchars($file) ?>
+                    </div>
+
+                <?php endforeach; ?>
+
+            <?php endif; ?>
+
         </div>
 
-        <div class="fileInputRow">
+        <div class="file-input-area">
 
             <input
-                id="fileInput"
                 type="text"
+                id="filename"
                 placeholder="File:"
                 autocomplete="off"
             >
+
+            <br>
 
             <button onclick="openTypedFile()">
                 Open
@@ -280,35 +359,34 @@ button:hover {
 
     </div>
 
+
     <!-- MODE SELECTION -->
 
-    <div id="modeCard" class="card">
+    <div id="modeCard" class="card hidden">
 
-        <div class="cardTitle">
-            MODE
+        <div class="card-title">
+            READING MODE
         </div>
 
-        <div class="modeLine">
-            1 = Timed reading
+        <div class="mode-option">
+            <span onclick="startReading(true)">
+                1 = Timed reading
+            </span>
         </div>
 
-        <div class="modeLine">
-            2 = Manual reading
+        <div class="mode-option">
+            <span onclick="startReading(false)">
+                2 = Manual reading
+            </span>
         </div>
 
-        <div class="modeLine">
+        <div id="modeButtons">
 
-            <button
-                class="modeButton"
-                onclick="startReading('timed')"
-            >
+            <button onclick="startReading(true)">
                 Timed
             </button>
 
-            <button
-                class="modeButton"
-                onclick="startReading('manual')"
-            >
+            <button onclick="startReading(false)">
                 Manual
             </button>
 
@@ -316,13 +394,14 @@ button:hover {
 
     </div>
 
+
     <!-- READING -->
 
-    <div id="readingCard" class="card">
+    <div id="readingCard" class="card hidden">
 
         <div id="readingText"></div>
 
-        <div class="readingButtons">
+        <div id="readingControls">
 
             <button onclick="previousLine()">
                 &larr; Back
@@ -336,59 +415,89 @@ button:hover {
 
     </div>
 
+
     <!-- BOTTOM BACK BUTTON -->
 
-    <div id="hint">
-        <button onclick="returnToFiles()">
-            Back
-        </button>
-    </div>
+    <button
+        id="backButton"
+        onclick="returnToFiles()"
+    >
+        Back
+    </button>
 
 </div>
 
+
 <script>
 
-/* =========================
-   REPOSITORY INFORMATION
-   ========================= */
-
-const siteHost = window.location.hostname;
-
-const siteParts = window.location.pathname
-    .split("/")
-    .filter(Boolean);
-
-let githubOwner = siteHost.split(".")[0];
-
-let githubRepo = siteParts[0] || "";
-
-
-/* =========================
-   READING VARIABLES
-   ========================= */
-
-let selectedFile = "";
-
-let lines = [];
-
-let currentLine = 0;
-
-let readingMode = "";
-
-let timer = null;
-
-
-/* =========================
+/* ==================================================
    STAR FIELD
-   ========================= */
+   ================================================== */
 
-function createStars() {
+const canvas =
+    document.getElementById("stars");
 
-    const stars =
-        document.getElementById("stars");
+const ctx =
+    canvas.getContext("2d");
 
-    stars.innerHTML = "";
+let stars = [];
 
+
+function resizeCanvas()
+{
+    canvas.width =
+        window.innerWidth;
+
+    canvas.height =
+        window.innerHeight;
+
+    createStars();
+}
+
+
+function createStars()
+{
+    stars = [];
+
+    const count =
+        Math.max(
+            100,
+            Math.floor(
+                canvas.width *
+                canvas.height /
+                3000
+            )
+        );
+
+    for (
+        let i = 0;
+        i < count;
+        i++
+    )
+    {
+        stars.push({
+
+            x:
+                Math.random() *
+                canvas.width,
+
+            y:
+                Math.random() *
+                canvas.height,
+
+            speed:
+                0.25 +
+                Math.random() * 1.2,
+
+            symbol:
+                randomStar()
+        });
+    }
+}
+
+
+function randomStar()
+{
     const symbols = [
         ".",
         ".",
@@ -398,258 +507,165 @@ function createStars() {
         "+"
     ];
 
-    const count = Math.max(
-        120,
+    return symbols[
         Math.floor(
-            window.innerWidth *
-            window.innerHeight /
-            7000
+            Math.random() *
+            symbols.length
         )
-    );
-
-    for (let i = 0; i < count; i++) {
-
-        const star =
-            document.createElement("div");
-
-        star.className = "star";
-
-        star.textContent =
-            symbols[
-                Math.floor(
-                    Math.random() *
-                    symbols.length
-                )
-            ];
-
-        star.style.left =
-            Math.random() * 100 + "%";
-
-        star.style.top =
-            Math.random() * 100 + "%";
-
-        star.style.fontSize =
-            (8 + Math.random() * 10) + "px";
-
-        star.style.opacity =
-            (
-                0.25 +
-                Math.random() * 0.75
-            ).toFixed(2);
-
-        star.style.animationDuration =
-            (
-                8 +
-                Math.random() * 18
-            ) + "s";
-
-        star.style.animationDelay =
-            (
-                -Math.random() * 20
-            ) + "s";
-
-        stars.appendChild(star);
-    }
+    ];
 }
 
-createStars();
+
+function animateStars()
+{
+    ctx.fillStyle = "#000";
+
+    ctx.fillRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+    ctx.fillStyle = "#fff";
+
+    ctx.font =
+        "14px monospace";
+
+    for (const star of stars)
+    {
+        star.y += star.speed;
+
+        if (
+            star.y >=
+            canvas.height
+        )
+        {
+            star.y = 0;
+
+            star.x =
+                Math.random() *
+                canvas.width;
+        }
+
+        star.symbol =
+            randomStar();
+
+        ctx.fillText(
+            star.symbol,
+            star.x,
+            star.y
+        );
+    }
+
+    requestAnimationFrame(
+        animateStars
+    );
+}
+
 
 window.addEventListener(
     "resize",
-    createStars
+    resizeCanvas
 );
 
+resizeCanvas();
 
-/* =========================
-   LOAD TXT FILES
-   ========================= */
-
-async function loadFiles() {
-
-    const fileList =
-        document.getElementById("fileList");
-
-    if (!githubOwner || !githubRepo) {
-
-        fileList.innerHTML =
-            '<div id="error">' +
-            'Could not determine repository.' +
-            '</div>';
-
-        return;
-    }
-
-    const apiURL =
-        "https://api.github.com/repos/" +
-        encodeURIComponent(githubOwner) +
-        "/" +
-        encodeURIComponent(githubRepo) +
-        "/contents/";
-
-    try {
-
-        const response =
-            await fetch(apiURL);
-
-        if (!response.ok) {
-            throw new Error(
-                "GitHub API error"
-            );
-        }
-
-        const files =
-            await response.json();
-
-        const txtFiles =
-            files
-                .filter(file =>
-                    file.type === "file" &&
-                    file.name
-                        .toLowerCase()
-                        .endsWith(".txt")
-                )
-                .sort((a, b) =>
-                    a.name.localeCompare(b.name)
-                );
-
-        fileList.innerHTML = "";
-
-        if (txtFiles.length === 0) {
-
-            fileList.innerHTML =
-                '<div id="error">' +
-                'No TXT files found.' +
-                '</div>';
-
-            return;
-        }
-
-        txtFiles.forEach(file => {
-
-            const item =
-                document.createElement("div");
-
-            item.className =
-                "fileItem";
-
-            item.textContent =
-                file.name;
-
-            item.onclick = function() {
-
-                selectFile(
-                    file.name,
-                    item
-                );
-
-            };
-
-            fileList.appendChild(item);
-        });
-
-    } catch (error) {
-
-        fileList.innerHTML =
-            '<div id="error">' +
-            'Could not load scripts.' +
-            '</div>';
-    }
-}
+animateStars();
 
 
-/* =========================
-   SELECT FILE
-   ========================= */
+/* ==================================================
+   FILE DATA
+   ================================================== */
 
-function selectFile(
-    filename,
-    element
-) {
+const availableFiles =
+    <?= json_encode($txtFiles) ?>;
 
-    selectedFile = filename;
+let selectedFile = "";
 
-    document
-        .querySelectorAll(".fileItem")
-        .forEach(item => {
+let lines = [];
 
-            item.classList.remove(
-                "selected"
-            );
+let currentLine = 0;
 
-        });
+let timedMode = true;
 
-    if (element) {
+let timer = null;
 
-        element.classList.add(
-            "selected"
-        );
 
-    }
+/* ==================================================
+   FILE SELECTION
+   ================================================== */
+
+function selectFile(file)
+{
+    selectedFile = file;
 
     document.getElementById(
-        "fileInput"
-    ).value = filename;
+        "filename"
+    ).value = file;
 
-    showMode();
+    showModeCard();
 }
 
 
-/* =========================
-   OPEN TYPED FILE
-   ========================= */
-
-function openTypedFile() {
-
+function openTypedFile()
+{
     const input =
         document.getElementById(
-            "fileInput"
+            "filename"
         );
 
     const filename =
         input.value.trim();
 
-    if (!filename) {
+    if (!filename)
+        return;
+
+    if (
+        !availableFiles.includes(
+            filename
+        )
+    )
+    {
+        alert(
+            "That TXT file was not found."
+        );
+
         return;
     }
 
     selectedFile = filename;
 
-    showMode();
+    showModeCard();
 }
 
 
-/* =========================
-   SHOW MODE
-   ========================= */
+/* ==================================================
+   MODE CARD
+   ================================================== */
 
-function showMode() {
-
+function showModeCard()
+{
     document.getElementById(
-        "filesCard"
-    ).style.display = "none";
+        "fileCard"
+    ).classList.add("hidden");
 
     document.getElementById(
         "modeCard"
-    ).style.display = "block";
-
-    document.getElementById(
-        "readingCard"
-    ).style.display = "none";
-
-    clearInterval(timer);
+    ).classList.remove("hidden");
 }
 
 
-/* =========================
+/* ==================================================
    START READING
-   ========================= */
+   ================================================== */
 
-async function startReading(mode) {
+async function startReading(timed)
+{
+    timedMode = timed;
 
-    readingMode = mode;
-
-    try {
-
+    try
+    {
         const response =
             await fetch(
                 encodeURIComponent(
@@ -657,101 +673,92 @@ async function startReading(mode) {
                 )
             );
 
-        if (!response.ok) {
-
-            throw new Error(
-                "File not found"
-            );
-
+        if (!response.ok)
+        {
+            throw new Error();
         }
 
         const text =
             await response.text();
 
         lines =
-            prepareLines(text);
-
-        if (lines.length === 0) {
-
-            lines = [
-                "No text found."
-            ];
-
-        }
+            text
+                .replace(/\r\n/g, "\n")
+                .replace(/\r/g, "\n")
+                .split("\n");
 
         currentLine = 0;
 
         document.getElementById(
             "modeCard"
-        ).style.display = "none";
+        ).classList.add("hidden");
 
         document.getElementById(
             "readingCard"
-        ).style.display = "block";
+        ).classList.remove("hidden");
 
         showLine();
 
-        clearInterval(timer);
-
-        if (readingMode === "timed") {
-
-            timer = setInterval(
-                nextLine,
-                3500
-            );
-
+        if (timed)
+        {
+            startTimer();
         }
-
-    } catch (error) {
-
+    }
+    catch
+    {
         alert(
-            "Could not open: " +
+            "Could not open " +
             selectedFile
         );
-
     }
 }
 
 
-/* =========================
-   PREPARE TEXT
-   ========================= */
+/* ==================================================
+   TEXT WRAPPING
+   ================================================== */
 
-function prepareLines(text) {
+function wrapText(
+    text,
+    maxCharacters
+)
+{
+    if (!text)
+        return [""];
 
     const words =
-        text
-            .replace(/\r/g, "")
-            .split(/\s+/)
-            .filter(Boolean);
+        text.split(/\s+/);
 
     const result = [];
 
     let current = "";
 
-    words.forEach(word => {
-
-        const test =
-            current === ""
-                ? word
-                : current + " " + word;
-
-        if (test.length <= 42) {
-
-            current = test;
-
-        } else {
-
-            if (current) {
-                result.push(current);
-            }
+    for (const word of words)
+    {
+        if (!current)
+        {
+            current = word;
+        }
+        else if (
+            current.length +
+            1 +
+            word.length <=
+            maxCharacters
+        )
+        {
+            current +=
+                " " + word;
+        }
+        else
+        {
+            result.push(current);
 
             current = word;
         }
+    }
 
-    });
-
-    if (current) {
+    if (current)
+    {
         result.push(current);
     }
 
@@ -759,236 +766,268 @@ function prepareLines(text) {
 }
 
 
-/* =========================
+/* ==================================================
    SHOW CURRENT LINE
-   ========================= */
+   ================================================== */
 
-function showLine() {
-
-    const readingText =
-        document.getElementById(
-            "readingText"
-        );
-
-    if (!lines.length) {
-
-        readingText.textContent = "";
-
-        return;
+function showLine()
+{
+    if (lines.length === 0)
+    {
+        lines = [""];
     }
 
-    if (currentLine < 0) {
-        currentLine = 0;
+    if (currentLine < 0)
+    {
+        currentLine =
+            lines.length - 1;
     }
 
     if (
         currentLine >=
         lines.length
-    ) {
-
-        currentLine =
-            lines.length - 1;
-
+    )
+    {
+        currentLine = 0;
     }
 
-    readingText.textContent =
+    const text =
         lines[currentLine];
+
+    const wrapped =
+        wrapText(
+            text,
+            42
+        );
+
+    const display =
+        wrapped
+            .slice(0, 5)
+            .join("<br>");
+
+    document.getElementById(
+        "readingText"
+    ).innerHTML = display;
+
+    if (timedMode)
+    {
+        startTimer();
+    }
 }
 
 
-/* =========================
+/* ==================================================
    NEXT LINE
-   ========================= */
+   ================================================== */
 
-function nextLine() {
+function nextLine()
+{
+    stopTimer();
+
+    currentLine++;
 
     if (
-        currentLine <
-        lines.length - 1
-    ) {
-
-        currentLine++;
-
-        showLine();
-
+        currentLine >=
+        lines.length
+    )
+    {
+        currentLine = 0;
     }
+
+    showLine();
 }
 
 
-/* =========================
+/* ==================================================
    PREVIOUS LINE
-   ========================= */
+   ================================================== */
 
-function previousLine() {
+function previousLine()
+{
+    stopTimer();
 
-    if (currentLine > 0) {
+    currentLine--;
 
-        currentLine--;
+    if (currentLine < 0)
+    {
+        currentLine =
+            lines.length - 1;
+    }
 
-        showLine();
+    showLine();
+}
 
+
+/* ==================================================
+   TIMER
+   ================================================== */
+
+function startTimer()
+{
+    stopTimer();
+
+    if (!timedMode)
+        return;
+
+    timer =
+        setTimeout(
+            function()
+            {
+                currentLine++;
+
+                if (
+                    currentLine >=
+                    lines.length
+                )
+                {
+                    currentLine = 0;
+                }
+
+                showLine();
+
+            },
+            3500
+        );
+}
+
+
+function stopTimer()
+{
+    if (timer !== null)
+    {
+        clearTimeout(timer);
+
+        timer = null;
     }
 }
 
 
-/* =========================
-   RETURN TO FILES
-   ========================= */
+/* ==================================================
+   RETURN TO FILE SELECTION
+   ================================================== */
 
-function returnToFiles() {
-
-    clearInterval(timer);
+function returnToFiles()
+{
+    stopTimer();
 
     document.getElementById(
         "readingCard"
-    ).style.display = "none";
+    ).classList.add("hidden");
 
     document.getElementById(
         "modeCard"
-    ).style.display = "none";
+    ).classList.add("hidden");
 
     document.getElementById(
-        "filesCard"
-    ).style.display = "block";
+        "fileCard"
+    ).classList.remove("hidden");
 
-    currentLine = 0;
-
-    lines = [];
-
-    readingMode = "";
+    document.getElementById(
+        "filename"
+    ).focus();
 }
 
 
-/* =========================
+/* ==================================================
    KEYBOARD CONTROLS
-   ========================= */
+   ================================================== */
 
 document.addEventListener(
     "keydown",
-    function(event) {
+    function(event)
+    {
+        const readingVisible =
+            !document
+                .getElementById(
+                    "readingCard"
+                )
+                .classList
+                .contains("hidden");
 
-        const key =
-            event.key.toLowerCase();
+
+        /* RIGHT ARROW */
+
+        if (
+            readingVisible &&
+            event.key === "ArrowRight"
+        )
+        {
+            event.preventDefault();
+
+            nextLine();
+
+            return;
+        }
 
 
-        /* Q = BACK */
+        /* LEFT ARROW */
 
-        if (key === "q") {
+        if (
+            readingVisible &&
+            event.key === "ArrowLeft"
+        )
+        {
+            event.preventDefault();
 
+            previousLine();
+
+            return;
+        }
+
+
+        /* ENTER IN MANUAL MODE */
+
+        if (
+            readingVisible &&
+            event.key === "Enter" &&
+            !timedMode
+        )
+        {
+            event.preventDefault();
+
+            nextLine();
+
+            return;
+        }
+
+
+        /* Q = FILE SELECTION */
+
+        if (
+            event.key === "q" ||
+            event.key === "Q"
+        )
+        {
             event.preventDefault();
 
             returnToFiles();
 
             return;
         }
-
-
-        /* READING CONTROLS */
-
-        if (
-            document.getElementById(
-                "readingCard"
-            ).style.display === "block"
-        ) {
-
-            if (
-                event.key ===
-                "ArrowLeft"
-            ) {
-
-                event.preventDefault();
-
-                previousLine();
-
-                return;
-            }
-
-            if (
-                event.key ===
-                "ArrowRight"
-            ) {
-
-                event.preventDefault();
-
-                nextLine();
-
-                return;
-            }
-
-            if (
-                event.key === "Enter" &&
-                readingMode === "manual"
-            ) {
-
-                event.preventDefault();
-
-                nextLine();
-
-                return;
-            }
-        }
-
-
-        /* MODE CONTROLS */
-
-        if (
-            document.getElementById(
-                "modeCard"
-            ).style.display === "block"
-        ) {
-
-            if (event.key === "1") {
-
-                event.preventDefault();
-
-                startReading("timed");
-
-                return;
-            }
-
-            if (event.key === "2") {
-
-                event.preventDefault();
-
-                startReading("manual");
-
-                return;
-            }
-        }
-
     }
 );
 
 
-/* =========================
+/* ==================================================
    FILE INPUT ENTER
-   ========================= */
+   ================================================== */
 
 document
-    .getElementById("fileInput")
+    .getElementById("filename")
     .addEventListener(
         "keydown",
-        function(event) {
-
+        function(event)
+        {
             if (
                 event.key === "Enter"
-            ) {
-
+            )
+            {
                 event.preventDefault();
 
                 openTypedFile();
-
             }
-
         }
     );
-
-
-/* =========================
-   LOAD PAGE
-   ========================= */
-
-loadFiles();
 
 </script>
 
